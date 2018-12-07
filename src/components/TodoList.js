@@ -19,6 +19,7 @@ const TodoList = ({ todos, onTodoClick }) => {
   )
 }
 const mapStateToTodoListProps = (state, { match: { params } }) => {
+  console.log('params.filter', params.filter)
   return {
     todos: getVisibleTodos(state, params.filter)
   }

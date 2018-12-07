@@ -1,25 +1,5 @@
-// reducer composition into a single reducer function
-// to handle actions for an individual item
-const todo = (state = [], action) => {
-  switch (action.type) {
-    case 'ADD_TODO':
-      return  {
-        id: action.id,
-        text: action.text,
-        completed: false
-      }
-    case 'TOGGLE_TODO':
-    if (state.id !== action.id) {
-      return state
-    } 
-    return {
-      ...state,
-      completed: !state.completed
-    }
-    default:
-      return state
-  }
-} 
+import { combineReducers } from 'redux';
+import todo from './todo';
 
 const byId = (state = {}, action) => {
   switch (action.type) {
@@ -27,34 +7,43 @@ const byId = (state = {}, action) => {
     case 'TOGGLE_TODO':
       return {
         ...state,
-      [action.id]: todo(state[action.id], action)
-      }
+        [action.id]: todo(state[action.id], action),
+      };
     default:
-      return state
+      return state;
   }
-}
+};
 
 const allIds = (state = [], action) => {
   switch (action.type) {
     case 'ADD_TODO':
-      return [...state, action.id]
+      return [...state, action.id];
     default:
-      return state
+      return state;
   }
-}
+};
 
-export default todos
+const todos = combineReducers({
+  byId,
+  allIds,
+});
 
- // selectors
+export default todos;
+
+const getAllTodos = (state) =>
+  state.allIds.map(id => state.byId[id]);
+
 export const getVisibleTodos = (state, filter) => {
+  const allTodos = getAllTodos(state);
   switch (filter) {
     case 'all':
-      return state
-    case 'active':
-      return state.filter(todo => !todo.completed)
+      return allTodos;
     case 'completed':
-      return state.filter(todo => todo.completed)
+      return allTodos.filter(t => t.completed);
+    case 'active':
+      return allTodos.filter(t => !t.completed);
     default:
-      return state
+      // throw new Error(`Unknown filter: ${filter}.`);
+      return allTodos
   }
-}
+};
