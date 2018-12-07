@@ -43,7 +43,7 @@ export const getVisibleTodos = (state, filter) => {
     case 'active':
       return allTodos.filter(t => !t.completed);
     default:
-      // throw new Error(`Unknown filter: ${filter}.`);
-      return allTodos
+      throw new Error(`Unknown filter: ${filter}.`);
+      // return allTodos
   }
 };
