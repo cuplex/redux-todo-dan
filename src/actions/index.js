@@ -1,6 +1,11 @@
 import { v4 } from 'node-uuid';
 
 // Action creators
+export const receiveTodos = (response, filter) => ({
+    type: 'RECEIVE_TODOS',
+    response,
+    filter
+})
 export const addTodo = (text) => ({
     type: 'ADD_TODO',
     id: v4(),

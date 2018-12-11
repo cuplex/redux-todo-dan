@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { withRouter } from 'react-router-dom'
 import Todo from './Todo'
 import { connect } from 'react-redux'
-import { toggleTodo } from '../actions'
+import * as actions from '../actions'
 import { getVisibleTodos } from '../reducers'
 import { fetchTodos } from '../api'
 
@@ -23,27 +23,35 @@ const TodoList = ({ todos, onTodoClick }) => {
 
 class VisibleTodoList extends Component {
   render () {
+    const {toggleTodo, ...rest} = this.props
     return (
-      <TodoList {...this.props}/>
+      <TodoList 
+        {...rest}
+        onTodoClick={toggleTodo}
+      />
     )
   }
   componentDidMount () {
-    fetchTodos(this.props.filter).then(todos => {
-      console.log(this.props.filter, todos)
-    })
+    this.fetchData()
   }
   componentDidUpdate(prevProps) {
     if (prevProps.filter !== this.props.filter) {
-      fetchTodos(this.props.filter).then(todos => {
-        console.log(this.props.filter, todos)
-      })
+      this.fetchData()
     }
   }
+  
+  fetchData() {
+    const { filter, receiveTodos } = this.props
+    fetchTodos(filter).then(todos => {
+      receiveTodos(todos, filter)
+    })
+  }
+
 }
 
-const mapStateToTodoListProps = (state, { match: { params } }) => {
+const mapStateToTodoListProps = (state, { match: { params } }) => { /* params comes from the route by the router */
   const filter = params.filter || 'all'
-  console.log('params.filter', filter)
+  // console.log('params.filter', filter)
   return {
     todos: getVisibleTodos(state, filter),
     filter
@@ -64,7 +72,7 @@ VisibleTodoList = withRouter(connect(
     param passed to the dispatch function, it can be
     specified like below, a special object {theCallback : theActionObject}
   */
-  {onTodoClick: toggleTodo} 
+ actions 
 )(VisibleTodoList))
 
 export default VisibleTodoList
