@@ -1,11 +1,19 @@
 import { v4 } from 'node-uuid';
+import * as api from '../api'
 
 // Action creators
-export const receiveTodos = (response, filter) => ({
+const receiveTodos = (response, filter) => ({
     type: 'RECEIVE_TODOS',
     response,
     filter
 })
+
+export const fetchTodos = (filter) => 
+    api.fetchTodos(filter)
+    .then(todos => 
+        receiveTodos(todos, filter)
+    )
+
 export const addTodo = (text) => ({
     type: 'ADD_TODO',
     id: v4(),

@@ -18,15 +18,30 @@ const addLoggingToDispatch = (store) => {
   } 
 }
 
+const addPromiseSupportToStore = (store) => {
+  const rawDispatch = store.dispatch
+
+  return (action) => {
+    if (typeof action.then ===  'function') {
+      return action.then(rawDispatch)
+    }
+
+    return rawDispatch(action)
+  }
+}
+
 const configureStore = () => {
 
   const store = createStore(
-    reducers, 
+    reducers,
+    window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__() 
   )
   
   if (process.env.NODE_ENV !== 'production') {
     store.dispatch = addLoggingToDispatch(store)
   }
+
+  store.dispatch = addPromiseSupportToStore(store)
 
   return store
 }
