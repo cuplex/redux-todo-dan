@@ -8,6 +8,11 @@ const receiveTodos = (response, filter) => ({
     filter
 })
 
+export const requestTodos = (filter) => ({
+    type: 'REQUEST_TODOS',
+    filter
+})
+
 export const fetchTodos = (filter) => 
     api.fetchTodos(filter)
     .then(todos => 

@@ -1,33 +1,24 @@
-import { combineReducers } from 'redux'
-import todos, * as fromTodos from './todos'
+import { combineReducers } from 'redux';
+import byId, * as fromById from './byId';
+import createList, * as fromList from './createList'
 
-const reducer = combineReducers({
-  todos,
+const listByFilter = combineReducers({
+  all: createList('all'),
+  active: createList('active'),
+  completed: createList('completed')
 })
 
-export default reducer
+const todos = combineReducers({
+  byId,
+  listByFilter,
+});
 
-export const getVisibleTodos = (state, filter) => fromTodos.getVisibleTodos(state.todos, filter)
+export default todos;
 
-/* Don't delete, just kept this as an example of the implement  ation of the combineReducers function */
+export const getVisibleTodos = (state, filter) => {
+  const ids = fromList.getIds(state.listByFilter[filter])
+  return ids.map(id => fromById.getTodo(state.byId, id))
+};
 
-// building combineReducers from scratch as a the result of the Array.prototype.reduce ES6 array method
-// const combineReducers = (reducers) => {
-//   return (state = {}, action) => {
-//     return Object.keys(reducers).reduce(
-//         (nextState, key) => {
-//           nextState[key] = reducers[key](
-//             state[key],
-//             action
-//           )
-//           return nextState  
-//         },
-//       {})
-//   }
-// }
-
-// const todosApp = combineReducers({
-//   todos,
-//   visibilityFilter
-// })
-
+export const getIsFetching = (state, filter) => 
+  fromList.getIsFetching(state.listByFilter[filter])
