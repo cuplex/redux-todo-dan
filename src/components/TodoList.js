@@ -47,30 +47,22 @@ class VisibleTodoList extends Component {
   }
   
   fetchData() {
-    const { filter, fetchTodos, requestTodos } = this.props
-    requestTodos(filter)
-    fetchTodos(filter)
+    const { filter, fetchTodos } = this.props
+    fetchTodos(filter).then(() => console.log('done fetching data'))
   }
 
 }
 
-const mapStateToTodoListProps = (state, { match: { params } }) => { /* params comes from the route by the router */
+/* params comes from the route by the router */
+const mapStateToTodoListProps = (state, { match: { params } }) => { 
   const filter = params.filter || 'all'
-  // console.log('params.filter', filter)
   return {
     todos: getVisibleTodos(state, filter),
     filter,
     isFetching: getIsFetching(state, filter)
   }
 }
-// const mapDispatchToTodoListProps = (dispatch) => ({
-//     onTodoClick(id) { 
-//       dispatch(toggleTodo(id))
-//     },
-// })
-/* withRouter higher order component injects the route params as props to the wrapped component 
-  which can be handled as own component props, cool, doesn't it?
-*/
+
 VisibleTodoList = withRouter(connect(
   mapStateToTodoListProps, 
   /* this is a special case when the param passed to  
@@ -82,3 +74,12 @@ VisibleTodoList = withRouter(connect(
 )(VisibleTodoList))
 
 export default VisibleTodoList
+
+// const mapDispatchToTodoListProps = (dispatch) => ({
+//     onTodoClick(id) { 
+//       dispatch(toggleTodo(id))
+//     },
+// })
+/* withRouter higher order component injects the route params as props to the wrapped component 
+  which can be handled as own component props, cool, doesn't it?
+*/

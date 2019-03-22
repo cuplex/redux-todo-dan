@@ -1,9 +1,25 @@
 import reducers from './reducers'
 import { createStore, applyMiddleware } from 'redux'
 import {createLogger} from 'redux-logger'
-import promise from 'redux-promise'
+import thunk from 'redux-thunk'
 
 
+
+const configureStore = () => {
+
+  const middlewares = [thunk]
+  if (process.env.NODE_ENV !== 'production') {
+    middlewares.push(createLogger())
+  }
+  
+return  createStore(
+    reducers,
+    applyMiddleware(...middlewares)
+    // window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__() 
+  )
+}
+
+export default configureStore
 // const logger = (store) => (next) => {
 
 //   if (!console.group) {
@@ -21,12 +37,11 @@ import promise from 'redux-promise'
 //   }
 // } 
 
-// const promise = (store) => (next) => (action) => {
-//   if (typeof action.then ===  'function') {
-//     return action.then(next)
-//   }
-//   return next(action)
-// }
+// const thunk = (store) => (next) => (action) => 
+//   typeof action ===  'function' 
+//   ?  action(store.dispatch, store.getState)
+//   :  next(action)
+
 
 
 // const wrapDispatchWithMiddlewares = (store, middlewares) => {
@@ -34,19 +49,3 @@ import promise from 'redux-promise'
 //     store.dispatch = middleware(store)(store.dispatch)
 //   })
 // }
-
-const configureStore = () => {
-
-  const middlewares = [promise]
-  if (process.env.NODE_ENV !== 'production') {
-    middlewares.push(createLogger())
-  }
-  
-return  createStore(
-    reducers,
-    applyMiddleware(...middlewares)
-    // window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__() 
-  )
-}
-
-export default configureStore

@@ -14,20 +14,20 @@ const createList = (filter) => {
     }
   }
 
-  const isFetching = (state = false, action) => {
-    if (action.filter !== filter) {
-      return state
-    }
-
-    switch (action.type) {
-      case 'REQUEST_TODOS':
-        return true
-      case 'RECEIVE_TODOS':
-        return false
-      default:
-        return state
-    }
+const isFetching = (state = false, action) => {
+  if (action.filter !== filter) {
+    return state
   }
+
+  switch (action.type) {
+    case 'REQUEST_TODOS':
+      return true
+    case 'RECEIVE_TODOS':
+      return false
+    default:
+      return state
+  }
+}
 
   return combineReducers({
     ids,
